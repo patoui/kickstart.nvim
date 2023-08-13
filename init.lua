@@ -550,4 +550,8 @@ dap.configurations.php = {
 -- openingh Open In GitHub
 vim.keymap.set("n", "<leader>gf", ":OpenInGHFileLines <CR>", { silent = true, noremap = true })
 
-
+vim.keymap.set('n', '<leader>tt', function()
+  local relative_path = vim.fn.expand('%:.') .. ' foooooooobar'
+  print("The relative path is: ", relative_path)
+  vim.cmd(string.format([[let @+="%s"]], relative_path))
+end, { desc = 'Copy relative path' })
