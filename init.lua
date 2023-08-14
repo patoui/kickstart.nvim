@@ -548,7 +548,7 @@ dap.configurations.php = {
 -- vim: ts=2 sts=2 sw=2 et
 
 -- openingh Open In GitHub
-vim.keymap.set("n", "<leader>gf", ":OpenInGHFileLines <CR>", { silent = true, noremap = true })
+vim.keymap.set("n", "<leader>gf", ":OpenInGHFileLines <CR>", { silent = true, noremap = true, desc = "Open line in GitHub" })
 
 vim.keymap.set('n', '<leader>tt', function()
   local relative_path = vim.fn.expand('%:.') .. ' foooooooobar'
