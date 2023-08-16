@@ -551,7 +551,9 @@ dap.configurations.php = {
 vim.keymap.set("n", "<leader>gf", ":OpenInGHFileLines <CR>", { silent = true, noremap = true, desc = "Open line in GitHub" })
 
 vim.keymap.set('n', '<leader>tt', function()
-  local relative_path = vim.fn.expand('%:.') .. ' foooooooobar'
-  print("The relative path is: ", relative_path)
-  vim.cmd(string.format([[let @+="%s"]], relative_path))
+  local relative_path = vim.fn.expand('%:.')
+  local curword = vim.fn.escape(vim.fn.expand('<cword>'), [[\/]])
+  local to_copy = string.format("./leaf test %s --filter=%s", relative_path, curword)
+  vim.cmd(string.format([[let @+="%s"]], to_copy))
+  print('Copied to system clipboard: ', to_copy)
 end, { desc = 'Copy relative path' })
