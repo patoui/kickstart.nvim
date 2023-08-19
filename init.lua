@@ -296,7 +296,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'php', 'python', 'rust', 'tsx', 'typescript', 'vim', 'vue', 'javascript', 'css', 'scss', 'html' },
+  ensure_installed = { 'go', 'lua', 'php', 'python', 'tsx', 'typescript', 'vim', 'vue', 'javascript', 'css', 'scss', 'html' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -550,10 +550,70 @@ dap.configurations.php = {
 -- openingh Open In GitHub
 vim.keymap.set("n", "<leader>gf", ":OpenInGHFileLines <CR>", { silent = true, noremap = true, desc = "Open line in GitHub" })
 
+-- Copy Command (CC) global object
+local CC = {}
+
+-- find the name of the closest method or class
+function CC.find_method_or_class_name(tail)
+  if tail == nil then
+    return ""
+  end
+
+  local n = tail
+
+  while n do
+    local type = n:type()
+
+    if type == "method_declaration" or type == "class_declaration" then
+      break
+    end
+
+    n = n:parent()
+  end
+
+  if n == nil then
+    return ""
+  end
+
+  return CC.find_name(n)
+end
+
+-- finds the name of the node (symbol)
+function CC.find_name(n)
+  for i = 0, n:named_child_count() - 1, 1 do
+    local child = n:named_child(i)
+    local type = child:type()
+
+    if type == 'name' then
+        return vim.treesitter.query.get_node_text(child, 0)
+    else
+        local name = CC.find_name(child)
+
+        if name then
+            return name
+        end
+    end
+  end
+end
+
 vim.keymap.set('n', '<leader>tt', function()
   local relative_path = vim.fn.expand('%:.')
-  local curword = vim.fn.escape(vim.fn.expand('<cword>'), [[\/]])
-  local to_copy = string.format("./leaf test %s --filter=%s", relative_path, curword)
+
+  -- get the symbol name under the cursor
+  -- local curword = vim.fn.escape(vim.fn.expand('<cword>'), [[\/]])
+
+  local current_node = require'nvim-treesitter.ts_utils'.get_node_at_cursor()
+
+  local symbol_name = CC.find_method_or_class_name(current_node)
+
+  local to_copy = string.format("./leaf test %s", relative_path, symbol_name)
+
+  if symbol_name ~= nil and symbol_name ~= "" then
+    local filter = string.format(" --filter=%s", symbol_name)
+    to_copy = to_copy .. filter
+  end
+
   vim.cmd(string.format([[let @+="%s"]], to_copy))
-  print('Copied to system clipboard: ', to_copy)
-end, { desc = 'Copy relative path' })
+
+  print('Copied to clipboard: ', to_copy)
+end, { desc = 'Copy command to clipboard' })
