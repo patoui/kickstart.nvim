@@ -585,7 +585,7 @@ function CC.find_name(n)
     local type = child:type()
 
     if type == 'name' then
-        return vim.treesitter.query.get_node_text(child, 0)
+        return vim.treesitter.get_node_text(child, 0)
     else
         local name = CC.find_name(child)
 
