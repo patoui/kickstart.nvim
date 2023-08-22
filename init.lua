@@ -585,7 +585,11 @@ function CC.find_name(n)
     local type = child:type()
 
     if type == 'name' then
-        return vim.treesitter.get_node_text(child, 0)
+        local node_text = vim.treesitter.get_node_text(child, 0)
+        -- ignore 'Test' attribute
+        if node_text ~= 'Test' then
+          return node_text
+        end
     else
         local name = CC.find_name(child)
 
@@ -600,7 +604,7 @@ vim.keymap.set('n', '<leader>tt', function()
   local relative_path = vim.fn.expand('%:.')
 
   -- get the symbol name under the cursor
-  -- local curword = vim.fn.escape(vim.fn.expand('<cword>'), [[\/]])
+  --local symbol_name = vim.fn.escape(vim.fn.expand('<cword>'), [[\/]])
 
   local current_node = require'nvim-treesitter.ts_utils'.get_node_at_cursor()
 
