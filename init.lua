@@ -168,6 +168,7 @@ require('lazy').setup({
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
+    tag = 'v0.9.1',
     build = ":TSUpdate",
   },
 
