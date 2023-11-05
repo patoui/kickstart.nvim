@@ -1,3 +1,6 @@
+> [!WARNING]  
+> This repository has been archived, please reference [dotfiles](https://github.com/patoui/dotfiles) for the latest changes
+
 # patoui's kickstart.nvim
 
 ### Introduction
